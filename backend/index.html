@@ -1,0 +1,781 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<title>Backend Development Proposal</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: compliance-SaaS rhythm. White centred hero, a dark product stage, light lilac card bands,
+   full-bleed near-black sections lit by a deep green glow with glassy tiles, then pricing cards and a closing CTA.
+   One deliberate light look with dark bands, so every colour is set explicitly. */
+:root {
+  color-scheme: light;
+  --ink: #0A0C0E;
+  --ink-2: #4B5161;
+  --ink-3: #7A8194;
+  --paper: #FFFFFF;
+  --lilac: #F4F5FB;
+  --mist: #F3F4F7;
+  --line: #DEE2ED;
+  --line-2: #E0E4EB;
+  --blue: #1764FF;
+  --blue-hover: #0F52DB;
+  --mint: #34FFC2;
+  --night: #0A0C0E;
+  --night-2: #1A1C1E;
+  --forest: #031210;
+  --glass: rgba(255, 255, 255, 0.08);
+  --glass-line: rgba(255, 255, 255, 0.12);
+  --on-night: #FFFFFF;
+  --on-night-2: rgba(255, 255, 255, 0.70);
+  --on-night-3: rgba(255, 255, 255, 0.48);
+  --font: "Geist", "Inter", "Helvetica Neue", Arial, sans-serif;
+  --mono: "Geist Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  --r-sm: 8px; --r-md: 16px; --r-lg: 24px;
+  --wrap: 1200px;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } * { animation: none !important; transition: none !important; } }
+body {
+  margin: 0; background: var(--paper); color: var(--ink);
+  font-family: var(--font); font-size: 16px; line-height: 1.5; -webkit-font-smoothing: antialiased;
+}
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 30; background: rgba(255,255,255,.92); }
+a { color: inherit; }
+p { margin: 0; }
+h1, h2, h3 { margin: 0; font-weight: 400; text-wrap: balance; }
+.wrap {
+  max-width: var(--wrap); margin: 0 auto;
+  padding-left: max(24px, env(safe-area-inset-left, 0px));
+  padding-right: max(24px, env(safe-area-inset-right, 0px));
+}
+.num { font-variant-numeric: tabular-nums; }
+:focus-visible { outline: 2px solid var(--blue); outline-offset: 3px; border-radius: 6px; }
+
+/* Buttons */
+.btn {
+  display: inline-flex; align-items: center; gap: 8px; text-decoration: none;
+  font: 500 16px/22px var(--font); padding: 13px 20px; border-radius: var(--r-sm);
+  border: 1px solid transparent; cursor: pointer; transition: background .15s, border-color .15s;
+}
+.btn-blue { background: var(--blue); color: #FFFFFF; }
+.btn-blue:hover { background: var(--blue-hover); }
+.btn-ghost { background: var(--paper); color: var(--ink); border-color: var(--line); }
+.btn-ghost:hover { border-color: var(--ink-3); }
+.btn-mint { background: var(--mint); color: var(--night); }
+.btn-mint:hover { background: #2BE8B0; }
+.btn-sm { padding: 8px 12px; }
+
+/* Nav */
+.nav { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 20; background: rgba(255,255,255,.92); backdrop-filter: saturate(1.4) blur(12px); border-bottom: 1px solid transparent; }
+.nav.scrolled { border-bottom-color: var(--line-2); }
+.nav .wrap { display: flex; align-items: center; justify-content: space-between; gap: 24px; height: 68px; }
+.mark { display: inline-flex; align-items: baseline; gap: 0; text-decoration: none; font-weight: 700; font-size: 22px; letter-spacing: -0.03em; }
+.mark span { color: #13B981; }
+.nav-links { display: flex; gap: 28px; font-size: 15px; }
+.nav-links a { text-decoration: none; color: var(--ink); }
+.nav-links a:hover { color: var(--blue); }
+.nav-right { display: flex; align-items: center; gap: 16px; font-size: 14px; color: var(--ink-2); }
+
+/* Hero */
+.hero { padding-block: 72px 40px; text-align: center; }
+.eyebrow { display: inline-flex; align-items: center; gap: 8px; padding: 6px 12px; border-radius: 999px; background: var(--lilac); color: var(--ink-2); font-size: 14px; }
+.eyebrow b { color: var(--ink); font-weight: 500; }
+.dot { width: 8px; height: 8px; border-radius: 50%; background: #13B981; }
+.hero h1 { margin: 24px auto 0; max-width: 980px; font-size: clamp(40px, 6vw, 64px); line-height: 1; letter-spacing: -0.02em; }
+.hero .sub { margin: 20px auto 0; max-width: 720px; font-size: 20px; line-height: 1.4; color: var(--ink-2); }
+.hero .ctas { margin-top: 32px; display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; }
+.partners { margin-top: 56px; display: flex; flex-wrap: wrap; justify-content: center; gap: 12px 40px; color: var(--ink-3); font-size: 15px; font-weight: 500; letter-spacing: -0.01em; }
+.partners small { width: 100%; font-size: 13px; font-weight: 400; color: var(--ink-3); }
+
+/* Stage: dark product card */
+.stage { margin-top: 48px; position: relative; overflow: hidden; border-radius: var(--r-lg); background: var(--forest);
+  background-image: radial-gradient(60% 80% at 75% 10%, rgba(52,255,194,.28), transparent 60%), radial-gradient(50% 70% at 10% 100%, rgba(23,100,255,.25), transparent 60%);
+  display: grid; grid-template-columns: 1.1fr 1fr; gap: 40px; padding: 56px; color: var(--on-night); text-align: left; }
+.stage h2 { font-size: 32px; line-height: 1.15; letter-spacing: -0.01em; }
+.stage p { margin-top: 14px; color: var(--on-night-2); font-size: 17px; line-height: 1.5; max-width: 46ch; }
+.stage-list { margin-top: 28px; display: grid; gap: 10px; }
+.stage-list div { display: flex; gap: 12px; align-items: flex-start; padding: 14px 16px; background: var(--glass); border: 1px solid var(--glass-line); border-radius: var(--r-sm); font-size: 15px; }
+.stage-list i { flex: none; width: 20px; height: 20px; border-radius: 50%; background: rgba(52,255,194,.16); display: grid; place-items: center; font-style: normal; color: var(--mint); font-size: 12px; margin-top: 1px; }
+.phone-zone { position: relative; display: grid; place-items: center; min-height: 520px; }
+.phone { width: 270px; border-radius: 40px; background: #0E1113; border: 1px solid rgba(255,255,255,.14); padding: 14px; box-shadow: 0 40px 80px rgba(0,0,0,.45); }
+.screen { border-radius: 28px; background: #FFFFFF; color: var(--ink); padding: 18px 16px 16px; display: grid; gap: 14px; }
+.screen .top { display: flex; justify-content: space-between; align-items: center; font-size: 12px; color: var(--ink-3); }
+.screen .bal small { font-size: 12px; color: var(--ink-3); }
+.screen .bal strong { display: block; font-size: 28px; font-weight: 500; letter-spacing: -0.02em; }
+.screen .acts { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.screen .acts span { background: var(--lilac); border-radius: 12px; padding: 10px 4px; text-align: center; font-size: 11px; font-weight: 500; }
+.screen .acts span:first-child { background: var(--blue); color: #FFFFFF; }
+.screen .row { display: flex; justify-content: space-between; align-items: center; font-size: 12px; padding: 8px 0; border-top: 1px solid var(--mist); }
+.screen .row b { font-weight: 500; }
+.screen .pill { font-size: 10px; padding: 2px 8px; border-radius: 999px; background: #E9FBF3; color: #087A55; }
+.screen .pill.wait { background: #FFF4DE; color: #8A5A00; }
+.float { position: absolute; background: #FFFFFF; color: var(--ink); border-radius: 14px; padding: 12px 14px; font-size: 13px; box-shadow: 0 16px 40px rgba(0,0,0,.25); max-width: 210px; }
+.float b { display: block; font-weight: 500; }
+.float span { color: var(--ink-3); font-size: 12px; }
+.float.f1 { top: 40px; left: 0; }
+.float.f2 { bottom: 56px; right: 0; }
+.sample { position: absolute; bottom: 8px; left: 50%; transform: translateX(-50%); font-size: 11px; color: var(--on-night-3); white-space: nowrap; }
+
+/* Section heads */
+section { scroll-margin-top: 80px; }
+.band { padding-block: 112px; }
+.head { text-align: center; max-width: 820px; margin: 0 auto 56px; }
+.head .kicker { font-size: 14px; color: var(--blue); font-weight: 500; }
+.head h2 { margin-top: 12px; font-size: clamp(34px, 4.4vw, 48px); line-height: 1.08; letter-spacing: -0.015em; }
+.head p { margin: 16px auto 0; max-width: 640px; font-size: 18px; line-height: 1.4; color: var(--ink-2); }
+
+/* Lilac cards */
+.cards4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+.lcard { background: var(--lilac); border-radius: var(--r-lg); padding: 28px; display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+.lcard .ico { width: 44px; height: 44px; border-radius: 12px; background: #FFFFFF; display: grid; place-items: center; margin-bottom: 18px; }
+.lcard h3 { font-size: 20px; font-weight: 500; letter-spacing: -0.01em; }
+.lcard p { color: var(--ink-2); font-size: 15px; line-height: 1.45; }
+
+/* Dark band */
+.dark { background: var(--night); color: var(--on-night); position: relative; overflow: hidden; }
+.dark::before { content: ""; position: absolute; inset: 0; background: radial-gradient(55% 60% at 85% 0%, rgba(19,185,129,.35), transparent 65%), radial-gradient(45% 50% at 0% 100%, rgba(3,60,45,.7), transparent 70%); pointer-events: none; }
+.dark .wrap { position: relative; }
+.dark .head .kicker { color: var(--mint); }
+.dark .head p { color: var(--on-night-2); }
+.split { display: grid; grid-template-columns: 300px 1fr; gap: 56px; align-items: start; }
+.split .side { position: sticky; top: 100px; }
+.split .side h2 { font-size: 32px; line-height: 1.12; letter-spacing: -0.01em; }
+.split .side p { margin-top: 14px; color: var(--on-night-2); font-size: 16px; }
+.split .side .legend { margin-top: 24px; display: grid; gap: 8px; font-size: 14px; color: var(--on-night-2); }
+.legend span { display: inline-flex; align-items: center; gap: 8px; }
+.legend i { width: 10px; height: 10px; border-radius: 3px; }
+.tabs { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px; }
+.tab { font: 500 14px/20px var(--font); padding: 7px 14px; border-radius: 999px; border: 1px solid var(--glass-line); background: transparent; color: var(--on-night-2); cursor: pointer; }
+.tab[aria-selected="true"] { background: #FFFFFF; color: var(--night); border-color: #FFFFFF; }
+.tiles { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+.tile { background: var(--glass); border: 1px solid transparent; border-radius: var(--r-sm); padding: 20px; min-height: 148px; display: flex; flex-direction: column; gap: 8px; transition: border-color .15s, background .15s; }
+.tile:hover { border-color: var(--glass-line); background: rgba(255,255,255,.11); }
+.tile .tag { align-self: flex-start; font: 500 11px/16px var(--mono); letter-spacing: .04em; text-transform: uppercase; padding: 2px 8px; border-radius: 999px; }
+.tag.df { background: rgba(52,255,194,.14); color: var(--mint); }
+.tag.be { background: rgba(23,100,255,.22); color: #A9C4FF; }
+.tile h3 { font-size: 17px; font-weight: 500; }
+.tile p { color: var(--on-night-2); font-size: 14px; line-height: 1.45; }
+
+/* Pricing */
+.pricing { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; align-items: stretch; }
+.pcard { background: var(--paper); border: 1px solid var(--line); border-radius: var(--r-lg); padding: 36px; display: flex; flex-direction: column; gap: 24px; min-width: 0; }
+.pcard.feature { background: var(--forest); border-color: var(--forest); color: var(--on-night);
+  background-image: radial-gradient(70% 60% at 100% 0%, rgba(52,255,194,.22), transparent 60%); }
+.pcard .who { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
+.pcard .who h3 { font-size: 24px; font-weight: 500; letter-spacing: -0.01em; }
+.chip { font-size: 13px; padding: 4px 10px; border-radius: 999px; background: var(--lilac); color: var(--ink-2); }
+.feature .chip { background: rgba(52,255,194,.14); color: var(--mint); }
+.price { font-size: clamp(34px, 4vw, 44px); line-height: 1; letter-spacing: -0.025em; }
+.price small { display: block; margin-top: 10px; font-size: 15px; letter-spacing: 0; color: var(--ink-2); }
+.feature .price small { color: var(--on-night-2); }
+.lines { display: grid; border-top: 1px solid var(--line-2); }
+.feature .lines { border-top-color: var(--glass-line); }
+.lines div { display: grid; grid-template-columns: 1fr auto; gap: 16px; padding: 14px 0; border-bottom: 1px solid var(--line-2); font-size: 15px; }
+.feature .lines div { border-bottom-color: var(--glass-line); }
+.lines div span:first-child small { display: block; font-size: 13px; color: var(--ink-3); margin-top: 2px; }
+.feature .lines div span:first-child small { color: var(--on-night-3); }
+.lines div span:last-child { font-weight: 500; white-space: nowrap; }
+.pcard .btn { align-self: flex-start; margin-top: auto; }
+.overall { margin-top: 16px; background: var(--mist); border: 1px solid var(--line-2); border-radius: var(--r-md); padding: 20px 28px; display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap; }
+.overall p { color: var(--ink-2); font-size: 15px; max-width: 60ch; }
+.overall strong { font-size: 24px; font-weight: 500; letter-spacing: -0.01em; }
+.addons { margin-top: 56px; }
+.addons h3 { font-size: 20px; font-weight: 500; margin-bottom: 16px; }
+.addon-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+.addon { background: var(--mist); border: 1px solid var(--line-2); border-radius: var(--r-md); padding: 20px; display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.addon b { font-weight: 500; }
+.addon span { color: var(--ink-2); font-size: 14px; }
+
+/* Timeline */
+.stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 40px; }
+.stat { background: var(--glass); border-radius: var(--r-md); padding: 24px; }
+.stat strong { display: block; font-size: 40px; font-weight: 400; letter-spacing: -0.02em; line-height: 1; }
+.stat span { display: block; margin-top: 10px; color: var(--on-night-2); font-size: 14px; }
+.stat.hi strong { color: var(--mint); }
+.gantt-wrap { background: var(--glass); border-radius: var(--r-lg); padding: 28px; overflow-x: auto; }
+.gantt { min-width: 760px; display: grid; grid-template-columns: 200px 1fr; row-gap: 12px; column-gap: 20px; align-items: center; }
+.gantt .lbl { font-size: 14px; color: var(--on-night); }
+.gantt .lbl small { display: block; font: 400 11px/14px var(--mono); color: var(--on-night-3); letter-spacing: .04em; text-transform: uppercase; }
+.track { position: relative; display: grid; grid-template-columns: repeat(37, 1fr); height: 28px; background-image: linear-gradient(to right, rgba(255,255,255,.06) 1px, transparent 1px); background-size: calc(100% / 37 * 4) 100%; }
+.bar { border-radius: 999px; display: flex; align-items: center; justify-content: flex-end; padding: 0 10px; font: 500 11px/1 var(--mono); white-space: nowrap; }
+.bar.b-df { background: rgba(52,255,194,.22); color: var(--mint); border: 1px solid rgba(52,255,194,.35); }
+.bar.b-be { background: rgba(23,100,255,.28); color: #C9DAFF; border: 1px solid rgba(23,100,255,.5); }
+.bar.b-qa { background: rgba(255,255,255,.12); color: var(--on-night); }
+.bar.b-go { background: var(--mint); color: var(--night); }
+.bar.b-wa { background: rgba(255,255,255,.06); color: var(--on-night-2); border: 1px dashed rgba(255,255,255,.2); }
+.axis { display: grid; grid-template-columns: repeat(37, 1fr); font: 400 11px/1 var(--mono); color: var(--on-night-3); }
+
+/* Milestones */
+.ms { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.mcard { border: 1px solid var(--line); border-radius: var(--r-lg); padding: 32px; min-width: 0; }
+.mcard h3 { font-size: 22px; font-weight: 500; letter-spacing: -0.01em; }
+.mcard > p { margin-top: 6px; color: var(--ink-2); font-size: 15px; }
+.mbar { margin: 24px 0 8px; display: flex; gap: 4px; height: 10px; }
+.mbar i { border-radius: 999px; }
+.mlist { display: grid; }
+.mlist div { display: grid; grid-template-columns: 28px 1fr auto; gap: 12px; align-items: center; padding: 14px 0; border-bottom: 1px solid var(--line-2); font-size: 15px; }
+.mlist div:last-child { border-bottom: 0; }
+.mlist em { font: normal 500 12px/1 var(--mono); color: var(--ink-3); }
+.mlist b { font-weight: 500; font-size: 18px; }
+
+/* Confidence grid */
+.conf { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+.ccard { background: var(--paper); border: 1px solid var(--line); border-radius: var(--r-lg); padding: 28px; display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+.ccard h3 { font-size: 18px; font-weight: 500; }
+.ccard p { color: var(--ink-2); font-size: 15px; line-height: 1.45; }
+.ccard .k { font: 500 12px/1 var(--mono); color: var(--blue); letter-spacing: .04em; text-transform: uppercase; }
+
+/* Terms */
+.terms { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.tcard { background: var(--lilac); border-radius: var(--r-lg); padding: 32px; min-width: 0; }
+.tcard h3 { font-size: 20px; font-weight: 500; margin-bottom: 12px; }
+.tcard ul { margin: 0; padding: 0; list-style: none; display: grid; gap: 10px; }
+.tcard li { display: grid; grid-template-columns: 18px 1fr; gap: 10px; font-size: 15px; color: var(--ink-2); line-height: 1.45; }
+.tcard li::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--ink-3); margin: 8px 0 0 4px; }
+
+/* CTA */
+.cta { padding-block: 0 112px; }
+.cta-card { border-radius: var(--r-lg); background: var(--forest); color: var(--on-night); padding: 64px; position: relative; overflow: hidden;
+  background-image: radial-gradient(60% 90% at 100% 100%, rgba(52,255,194,.30), transparent 60%), radial-gradient(40% 60% at 0% 0%, rgba(23,100,255,.25), transparent 60%); }
+.cta-card h2 { font-size: clamp(32px, 4.4vw, 48px); line-height: 1.08; letter-spacing: -0.015em; max-width: 720px; }
+.cta-card > p { margin-top: 16px; color: var(--on-night-2); font-size: 18px; max-width: 560px; }
+.steps { margin: 40px 0 0; padding: 0; list-style: none; counter-reset: s; display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; }
+.steps li { counter-increment: s; background: var(--glass); border-radius: var(--r-sm); padding: 18px; font-size: 14px; line-height: 1.45; color: var(--on-night); min-width: 0; }
+.steps li::before { content: counter(s, decimal-leading-zero); display: block; font: 500 12px/1 var(--mono); color: var(--mint); margin-bottom: 12px; }
+.cta-card .ctas { margin-top: 32px; display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
+.cta-card .ctas span { color: var(--on-night-2); font-size: 14px; }
+
+footer { border-top: 1px solid var(--line-2); padding-block: 32px 40px; color: var(--ink-3); font-size: 14px; }
+footer .wrap { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; align-items: center; }
+footer .mark { font-size: 18px; color: var(--ink); }
+
+/* Responsive */
+@media (max-width: 1080px) {
+  .nav-links { display: none; }
+  .stage { grid-template-columns: 1fr; padding: 40px; }
+  .cards4, .addon-grid { grid-template-columns: repeat(2, 1fr); }
+  .split { grid-template-columns: 1fr; gap: 32px; }
+  .split .side { position: static; }
+  .tiles { grid-template-columns: repeat(2, 1fr); }
+  .stats { grid-template-columns: repeat(2, 1fr); }
+  .steps { grid-template-columns: repeat(2, 1fr); }
+  .conf { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 720px) {
+  .wrap { padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+  .nav-right .who-for { display: none; }
+  .hero { padding-block: 48px 24px; }
+  .hero .sub { font-size: 17px; }
+  .stage { padding: 28px 20px; border-radius: var(--r-md); }
+  .phone-zone { min-height: 0; padding-block: 24px 36px; }
+  .float { display: none; }
+  .band { padding-block: 72px; }
+  .head { margin-bottom: 36px; }
+  .cards4, .addon-grid, .tiles, .pricing, .ms, .conf, .terms { grid-template-columns: 1fr; }
+  .pcard, .mcard, .tcard { padding: 24px; }
+  .stats { grid-template-columns: 1fr 1fr; }
+  .stat strong { font-size: 32px; }
+  .cta-card { padding: 32px 20px; }
+  .steps { grid-template-columns: 1fr; }
+}
+</style>
+<style>
+/* Shared additions for the two proposal pages */
+.switch { display: inline-flex; align-items: center; gap: 6px; font-size: 14px; color: var(--ink-2); text-decoration: none; padding: 6px 10px; border-radius: 999px; background: var(--lilac); }
+.switch:hover { color: var(--blue); }
+.hero-stats { margin: 40px auto 0; max-width: 920px; display: grid; grid-template-columns: repeat(4, 1fr); border: 1px solid var(--line); border-radius: var(--r-lg); overflow: hidden; text-align: left; }
+.hero-stats div { padding: 20px 24px; border-right: 1px solid var(--line); }
+.hero-stats div:last-child { border-right: 0; }
+.hero-stats strong { display: block; font-size: 28px; font-weight: 400; letter-spacing: -0.02em; }
+.hero-stats span { display: block; margin-top: 4px; font-size: 14px; color: var(--ink-2); }
+
+/* PRD coverage */
+.cov { border-top: 1px solid var(--line); }
+.cov-row { display: grid; grid-template-columns: 72px 1.1fr 1.6fr 1.6fr; gap: 24px; padding: 22px 0; border-bottom: 1px solid var(--line); align-items: start; }
+.cov-row.head-row { padding: 12px 0; font-size: 13px; color: var(--ink-3); }
+.cov-row > * { min-width: 0; }
+.sec { font: 500 13px/1 var(--mono); color: var(--blue); background: #EEF3FF; padding: 6px 8px; border-radius: 6px; justify-self: start; }
+.cov-row h3 { font-size: 17px; font-weight: 500; }
+.cov-row p { font-size: 15px; color: var(--ink-2); line-height: 1.45; }
+.cov-row .lab { display: none; font-size: 12px; color: var(--ink-3); margin-bottom: 2px; }
+
+/* Workstream detail blocks */
+.ws { display: grid; grid-template-columns: 380px 1fr; gap: 56px; align-items: start; }
+.ws + .ws { margin-top: 96px; }
+.ws .meta { position: sticky; top: 100px; display: flex; flex-direction: column; gap: 16px; }
+.ws .meta .kicker { font-size: 14px; color: var(--blue); font-weight: 500; }
+.ws .meta h2 { font-size: clamp(32px, 3.6vw, 44px); line-height: 1.08; letter-spacing: -0.015em; }
+.ws .meta p { color: var(--ink-2); font-size: 17px; line-height: 1.45; }
+.ws .facts { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.ws .facts div { background: var(--lilac); border-radius: var(--r-md); padding: 14px 16px; }
+.ws .facts b { display: block; font-size: 20px; font-weight: 500; letter-spacing: -0.01em; }
+.ws .facts span { font-size: 13px; color: var(--ink-2); }
+.deliv { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.dcard { border: 1px solid var(--line); border-radius: var(--r-md); padding: 22px; display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+.dcard h3 { font-size: 17px; font-weight: 500; }
+.dcard p { color: var(--ink-2); font-size: 15px; line-height: 1.45; }
+.dcard .k { font: 500 11px/1 var(--mono); letter-spacing: .05em; text-transform: uppercase; color: var(--ink-3); }
+
+/* Phases */
+.phases { display: grid; gap: 10px; }
+.phase { display: grid; grid-template-columns: 96px 1fr; gap: 20px; padding: 20px 22px; border-radius: var(--r-md); background: var(--lilac); }
+.phase .wk { font: 500 13px/1.4 var(--mono); color: var(--blue); }
+.phase h3 { font-size: 17px; font-weight: 500; }
+.phase p { margin-top: 4px; font-size: 15px; color: var(--ink-2); line-height: 1.45; }
+
+/* Screen inventory */
+.inv { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 16px; }
+.inv-col { border: 1px solid var(--line); border-radius: var(--r-md); padding: 22px; min-width: 0; }
+.inv-col h3 { font-size: 17px; font-weight: 500; display: flex; justify-content: space-between; gap: 12px; }
+.inv-col h3 span { color: var(--ink-3); font-weight: 400; font-size: 15px; }
+.inv-row { display: grid; grid-template-columns: 1fr auto; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--line-2); font-size: 15px; }
+.inv-row:last-child { border-bottom: 0; }
+.inv-row small { display: block; color: var(--ink-3); font-size: 13px; margin-top: 2px; }
+.inv-row b { font-weight: 500; }
+.note { margin-top: 12px; font-size: 13px; color: var(--ink-3); }
+
+/* Architecture */
+.arch { display: grid; gap: 14px; }
+.arch-row { display: grid; gap: 12px; }
+.arch-row.two { grid-template-columns: 1fr 1fr; }
+.arch-row.four { grid-template-columns: repeat(4, 1fr); }
+.arch-row.five { grid-template-columns: repeat(5, 1fr); }
+.node { background: var(--glass); border: 1px solid var(--glass-line); border-radius: var(--r-sm); padding: 16px; min-width: 0; }
+.node b { display: block; font-weight: 500; font-size: 15px; }
+.node span { display: block; margin-top: 4px; font-size: 13px; color: var(--on-night-2); line-height: 1.4; }
+.node.client { border-color: rgba(52,255,194,.35); background: rgba(52,255,194,.08); }
+.node.gate { text-align: center; border-color: rgba(23,100,255,.55); background: rgba(23,100,255,.16); }
+.node.core { border-color: rgba(23,100,255,.35); }
+.node.ext { border-style: dashed; }
+.flow { display: flex; align-items: center; justify-content: center; gap: 10px; font: 400 12px/1 var(--mono); color: var(--on-night-3); }
+.flow::before, .flow::after { content: ""; height: 1px; flex: 1; background: var(--glass-line); }
+.zone { font: 500 11px/1 var(--mono); letter-spacing: .06em; text-transform: uppercase; color: var(--on-night-3); margin-bottom: -4px; }
+.arch-split { display: grid; grid-template-columns: 1fr 1.4fr; gap: 24px; }
+.arch-split > div { display: grid; gap: 12px; align-content: start; min-width: 0; }
+.arch-split .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.arch-split .grid3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+
+/* Ledger explainer */
+.ledger { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.lg-card { border: 1px solid var(--line); border-radius: var(--r-lg); padding: 28px; min-width: 0; }
+.lg-card h3 { font-size: 20px; font-weight: 500; }
+.lg-card > p { margin-top: 8px; color: var(--ink-2); font-size: 15px; }
+.entries { margin-top: 18px; border: 1px solid var(--line-2); border-radius: var(--r-md); overflow: hidden; font-size: 14px; }
+.entries div { display: grid; grid-template-columns: 1.6fr 1fr 1fr; gap: 12px; padding: 11px 16px; border-bottom: 1px solid var(--line-2); }
+.entries div:last-child { border-bottom: 0; }
+.entries .eh { background: var(--mist); color: var(--ink-3); font-size: 12px; }
+.entries .fee { background: #EFFFF8; }
+.entries span:nth-child(2), .entries span:nth-child(3) { text-align: right; font-family: var(--mono); font-size: 13px; }
+.steps-v { margin: 18px 0 0; padding: 0; list-style: none; counter-reset: v; display: grid; gap: 10px; }
+.steps-v li { counter-increment: v; display: grid; grid-template-columns: 28px 1fr; gap: 12px; font-size: 15px; color: var(--ink-2); line-height: 1.45; }
+.steps-v li::before { content: counter(v); width: 24px; height: 24px; border-radius: 50%; background: var(--lilac); color: var(--blue); font: 500 12px/24px var(--mono); text-align: center; }
+
+/* Integrations table */
+.itable { border: 1px solid var(--line); border-radius: var(--r-lg); overflow: hidden; }
+.irow { display: grid; grid-template-columns: 1fr 1.6fr 1.6fr; gap: 20px; padding: 18px 24px; border-bottom: 1px solid var(--line-2); font-size: 15px; align-items: start; }
+.irow:last-child { border-bottom: 0; }
+.irow.ih { background: var(--mist); font-size: 13px; color: var(--ink-3); padding-block: 12px; }
+.irow b { font-weight: 500; }
+.irow span { color: var(--ink-2); }
+.irow > * { min-width: 0; }
+
+/* Open items */
+.open { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+.ocard { background: #FFF8EC; border: 1px solid #F5E2BD; border-radius: var(--r-md); padding: 22px; min-width: 0; }
+.ocard .k { font: 500 11px/1 var(--mono); letter-spacing: .05em; text-transform: uppercase; color: #8A5A00; }
+.ocard h3 { margin-top: 10px; font-size: 17px; font-weight: 500; }
+.ocard p { margin-top: 6px; color: var(--ink-2); font-size: 14px; line-height: 1.45; }
+
+.single { max-width: 760px; margin: 0 auto; }
+.pager { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; align-items: center; border: 1px solid var(--line); border-radius: var(--r-lg); padding: 28px 32px; margin-top: 56px; }
+.pager p { color: var(--ink-2); font-size: 15px; }
+.pager h3 { font-size: 22px; font-weight: 500; letter-spacing: -0.01em; }
+
+@media (max-width: 1080px) {
+  .ws { grid-template-columns: 1fr; gap: 32px; }
+  .ws .meta { position: static; }
+  .cov-row { grid-template-columns: 64px 1fr 1fr; }
+  .cov-row h3 { grid-column: 2 / -1; }
+  .cov-row .c1 { grid-column: 2; } .cov-row .c2 { grid-column: 3; }
+  .cov-row .lab { display: block; }
+  .cov-row.head-row { display: none; }
+  .arch-row.five, .arch-row.four { grid-template-columns: repeat(2, 1fr); }
+  .arch-split { grid-template-columns: 1fr; }
+  .open { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 720px) {
+  .hero-stats { grid-template-columns: 1fr 1fr; }
+  .hero-stats div:nth-child(2) { border-right: 0; }
+  .hero-stats div:nth-child(-n+2) { border-bottom: 1px solid var(--line); }
+  .cov-row { grid-template-columns: 1fr; gap: 10px; }
+  .cov-row h3, .cov-row .c1, .cov-row .c2 { grid-column: auto; }
+  .deliv, .inv, .ledger, .open, .arch-row.two, .arch-split .grid2, .arch-split .grid3 { grid-template-columns: 1fr; }
+  .phase { grid-template-columns: 1fr; gap: 6px; }
+  .irow { grid-template-columns: 1fr; gap: 4px; }
+  .irow.ih { display: none; }
+  .entries div { grid-template-columns: 1.4fr 1fr 1fr; padding: 10px 12px; }
+  .pager { padding: 22px; }
+}
+</style>
+<header class="nav" id="top">
+  <div class="wrap">
+    <a class="mark" href="#top" aria-label="Emrld, back to top">Emrld<span>.</span></a>
+    <nav class="nav-links" aria-label="Sections">
+      <a href="#prd">PRD coverage</a>
+      <a href="#architecture">Architecture</a>
+      <a href="#ledger">Ledger</a>
+      <a href="#integrations">Integrations</a>
+      <a href="#security">Security</a>
+      <a href="#investment">Investment</a>
+    </nav>
+    <div class="nav-right">
+      <a class="switch" href="../">Design &amp; frontend →</a>
+      <a class="btn btn-blue btn-sm" href="#next">Next steps</a>
+    </div>
+  </div>
+</header>
+
+<main>
+  <section class="hero">
+    <div class="wrap">
+      <span class="eyebrow"><span class="dot"></span><b>Proposal 2 of 2</b> Backend development · PRD v1.0 · 23 Oct 2026</span>
+      <h1>The secure core behind every Naira, coin and gift card</h1>
+      <p class="sub">A double-entry ledger, APIs and partner integrations built to pass security review, support SEC licensing and scale from thousands to hundreds of thousands of users.</p>
+      <div class="ctas">
+        <a class="btn btn-blue" href="#investment">See the investment</a>
+        <a class="btn btn-ghost" href="#architecture">View the architecture</a>
+      </div>
+      <div class="hero-stats num">
+        <div><strong>$14k – $29k</strong><span>Total, fixed after discovery</span></div>
+        <div><strong>Wk 9–26</strong><span>About 4 months of build and QA</span></div>
+        <div><strong>99.9%</strong><span>Uptime target from PRD §9</span></div>
+        <div><strong>Wk 27–28</strong><span>Live on Android and iOS</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="band" id="prd" style="padding-top:56px">
+    <div class="wrap">
+      <div class="head">
+        <span class="kicker">PRD coverage</span>
+        <h2>What the backend delivers against your requirements</h2>
+        <p>Each section of your PRD that depends on the backend, and how we meet it.</p>
+      </div>
+      <div class="cov">
+        <div class="cov-row head-row"><span>PRD</span><span>Requirement</span><span>What we build</span><span>How you control it</span></div>
+        <div class="cov-row"><span class="sec">§5.1</span><h3>Accounts and KYC</h3><p class="c1"><span class="lab">Build</span>OTP sign-up, BVN/NIN and liveness checks through the KYC provider, tiered limits, sessions and 2FA.</p><p class="c2"><span class="lab">Control</span>Tier limits set from the admin dashboard without code changes.</p></div>
+        <div class="cov-row"><span class="sec">§5.2</span><h3>Naira wallet</h3><p class="c1"><span class="lab">Build</span>Virtual accounts, funding webhooks, payouts with name enquiry, statements, and the 2% fee as its own ledger line.</p><p class="c2"><span class="lab">Control</span>Fee percentage with minimum and maximum caps, change history and a fee revenue report.</p></div>
+        <div class="cov-row"><span class="sec">§5.3</span><h3>Crypto trading</h3><p class="c1"><span class="lab">Build</span>Quotes with a lock window, execution through the liquidity partner, deposit addresses, sends with address checks and limits.</p><p class="c2"><span class="lab">Control</span>Margins per asset, supported assets and networks, withdrawal limits.</p></div>
+        <div class="cov-row"><span class="sec">§5.4</span><h3>Gift cards</h3><p class="c1"><span class="lab">Build</span>Supplier catalogue purchases, sell submissions with image storage, review states, and payout only after approval.</p><p class="c2"><span class="lab">Control</span>Per-brand and per-type rates and rules, rejection reasons, card code blacklist.</p></div>
+        <div class="cov-row"><span class="sec">§5.5</span><h3>Notifications and disputes</h3><p class="c1"><span class="lab">Build</span>Push, SMS and email for deposits, trades, payouts and security events; tickets and dispute status.</p><p class="c2"><span class="lab">Control</span>Message templates and which events notify which channel.</p></div>
+        <div class="cov-row"><span class="sec">§6</span><h3>Admin and operations</h3><p class="c1"><span class="lab">Build</span>APIs for user search, freezes, KYC review, queues, manual adjustments, reconciliation, analytics and CSV export.</p><p class="c2"><span class="lab">Control</span>Role-based permissions, second-approver workflows and a complete audit log.</p></div>
+        <div class="cov-row"><span class="sec">§8</span><h3>Security and compliance</h3><p class="c1"><span class="lab">Build</span>Idempotent ledger, managed keys, encryption, rate limits, device binding, cooldowns, AML and sanctions hooks.</p><p class="c2"><span class="lab">Control</span>Velocity limits and monitoring rules editable from the dashboard; SAR export.</p></div>
+        <div class="cov-row"><span class="sec">§9</span><h3>Performance and reliability</h3><p class="c1"><span class="lab">Build</span>Fast APIs for the 2-second screen target, automated backups, a disaster recovery plan, tests and CI/CD.</p><p class="c2"><span class="lab">Control</span>Monitoring dashboards and alerts your team can see.</p></div>
+        <div class="cov-row"><span class="sec">§11</span><h3>Ownership</h3><p class="c1"><span class="lab">Build</span>Code, infrastructure and API documentation in your repositories and cloud account from day one.</p><p class="c2"><span class="lab">Control</span>You hold every key, account and credential; IP transfers on payment.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="band dark" id="architecture">
+    <div class="wrap">
+      <div class="head">
+        <span class="kicker">Architecture</span>
+        <h2>A broker, not an exchange</h2>
+        <p>As your PRD sets out, the app connects to licensed partners through APIs instead of running its own order book. The ledger is the single source of truth for every balance.</p>
+      </div>
+      <div class="arch">
+        <span class="zone">Clients · design &amp; frontend proposal</span>
+        <div class="arch-row two">
+          <div class="node client"><b>Mobile app</b><span>Android and iOS, PIN and biometric sessions, device-bound</span></div>
+          <div class="node client"><b>Admin dashboard</b><span>Web, role-based access, second-approver actions</span></div>
+        </div>
+        <div class="flow">HTTPS · rate limited · signed sessions</div>
+        <div class="node gate"><b>API gateway and auth</b><span>OTP, sessions, 2FA, role checks, idempotency keys on every money request</span></div>
+        <div class="flow">internal services</div>
+        <span class="zone">Core services · this proposal</span>
+        <div class="arch-row four">
+          <div class="node core"><b>Ledger</b><span>Double-entry, append-only, balanced on every write</span></div>
+          <div class="node core"><b>Wallet and payouts</b><span>Virtual accounts, funding, withdrawals, fees</span></div>
+          <div class="node core"><b>Trading</b><span>Quotes, lock window, execution, deposits and sends</span></div>
+          <div class="node core"><b>Gift cards</b><span>Catalogue, submissions, review states, payouts</span></div>
+          <div class="node core"><b>KYC and tiers</b><span>Verification results, limits per tier</span></div>
+          <div class="node core"><b>Risk and AML</b><span>Velocity rules, blacklists, sanctions, alerts</span></div>
+          <div class="node core"><b>Notifications</b><span>Push, SMS, email, in-app messages</span></div>
+          <div class="node core"><b>Admin and reporting</b><span>Queues, adjustments, reconciliation, CSV</span></div>
+        </div>
+        <div class="flow">secured connections</div>
+        <div class="arch-split">
+          <div>
+            <span class="zone">Data and secrets</span>
+            <div class="grid2">
+              <div class="node"><b>Database</b><span>Encrypted, backed up, point-in-time restore</span></div>
+              <div class="node"><b>File storage</b><span>Gift card images, statements</span></div>
+              <div class="node"><b>Key management</b><span>Managed KMS or HSM, no keys in code</span></div>
+              <div class="node"><b>Audit log</b><span>Every admin action, immutable</span></div>
+            </div>
+          </div>
+          <div>
+            <span class="zone">Partners · confirmed in discovery</span>
+            <div class="grid3">
+              <div class="node ext"><b>Payments</b><span>Funding, payouts, name enquiry</span></div>
+              <div class="node ext"><b>KYC</b><span>BVN, NIN, liveness</span></div>
+              <div class="node ext"><b>Crypto liquidity</b><span>Pricing and execution</span></div>
+              <div class="node ext"><b>Gift card supply</b><span>Catalogue purchases</span></div>
+              <div class="node ext"><b>Messaging</b><span>SMS, email, push</span></div>
+              <div class="node ext"><b>Monitoring</b><span>Logs, metrics, alerts</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="band" id="ledger">
+    <div class="wrap">
+      <div class="head">
+        <span class="kicker">The ledger · PRD §8</span>
+        <h2>Every Naira accounted for, every request counted once</h2>
+        <p>The ledger is what lets the app pass security review. Balances are never edited directly; they are the sum of balanced entries.</p>
+      </div>
+      <div class="ledger">
+        <div class="lg-card">
+          <h3>A ₦50,000 withdrawal</h3>
+          <p>Each movement writes balanced entries. The 2% fee is its own line, as your PRD requires, so fee revenue reports straight from the ledger.</p>
+          <div class="entries num">
+            <div class="eh"><span>Account</span><span>Debit</span><span>Credit</span></div>
+            <div><span>Customer wallet</span><span>₦50,000</span><span>—</span></div>
+            <div><span>Bank payout (in transit)</span><span>—</span><span>₦49,000</span></div>
+            <div class="fee"><span>Fee revenue (2%)</span><span>—</span><span>₦1,000</span></div>
+          </div>
+          <p class="note">Example figures for illustration. Minimum and maximum fee caps apply when set.</p>
+        </div>
+        <div class="lg-card">
+          <h3>No double payouts</h3>
+          <p>Mobile networks drop and users tap twice. The backend makes sure that never moves money twice.</p>
+          <ol class="steps-v">
+            <li>The app sends each money request with a unique idempotency key.</li>
+            <li>The backend records the key before calling any partner.</li>
+            <li>A repeated request with the same key returns the first result instead of paying again.</li>
+            <li>Partner webhooks are matched to the original request and reconciled daily.</li>
+            <li>Mismatches raise an alert and appear in the reconciliation report for operations.</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="band" id="integrations" style="padding-top:0">
+    <div class="wrap">
+      <div class="head">
+        <span class="kicker">Integrations · PRD §7</span>
+        <h2>Partners we evaluate and connect</h2>
+        <p>The options named in your brief. We recommend one per area in discovery, with fees and restrictions, and connect it in this proposal.</p>
+      </div>
+      <div class="itable">
+        <div class="irow ih"><span>Area</span><span>Purpose</span><span>Options to evaluate</span></div>
+        <div class="irow"><b>Payments</b><span>Wallet funding, virtual accounts, bank payouts, name verification</span><span>Paystack, Flutterwave, Monnify</span></div>
+        <div class="irow"><b>KYC and identity</b><span>BVN, NIN and liveness checks for tiered accounts</span><span>Smile ID, Prembly</span></div>
+        <div class="irow"><b>Crypto liquidity</b><span>Pricing and execution of BTC, ETH and USDT trades</span><span>A licensed local exchange or liquidity API, chosen with your licensing route</span></div>
+        <div class="irow"><b>Gift card supply</b><span>Buying gift cards from a catalogue via API</span><span>Reloadly or similar</span></div>
+        <div class="irow"><b>Messaging</b><span>SMS, email and push notifications</span><span>Termii, SendGrid, Firebase</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="band" id="security" style="background:var(--lilac)">
+    <div class="wrap">
+      <div class="head">
+        <span class="kicker">Security and compliance · PRD §8</span>
+        <h2>Ready for security review and SEC licensing</h2>
+        <p>Every rule and limit is configurable without code changes, as your PRD requires.</p>
+      </div>
+      <div class="conf">
+        <div class="ccard"><span class="k">Secrets</span><h3>Keys never in code</h3><p>Private keys and secrets in a managed key service or HSM, never in app code or plain database fields.</p></div>
+        <div class="ccard"><span class="k">Encryption</span><h3>In transit and at rest</h3><p>TLS on every connection and encrypted storage for personal data, images and backups.</p></div>
+        <div class="ccard"><span class="k">Abuse</span><h3>Rate limits and device binding</h3><p>Per-user and per-device limits, bound sessions, and withdrawal cooldowns after sensitive changes.</p></div>
+        <div class="ccard"><span class="k">AML</span><h3>Monitoring and sanctions</h3><p>Transaction monitoring rules, sanctions screening hooks and suspicious activity report export.</p></div>
+        <div class="ccard"><span class="k">Data</span><h3>NDPA aligned</h3><p>Data minimisation, access logging and retention rules in line with Nigerian data protection law.</p></div>
+        <div class="ccard"><span class="k">Assurance</span><h3>Independent pen test</h3><p>Built to be tested by an external firm before launch; offered as an optional line below.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="band dark" id="reliability">
+    <div class="wrap">
+      <div class="head">
+        <span class="kicker">Reliability and scale · PRD §9</span>
+        <h2>Built to grow from thousands to hundreds of thousands of users</h2>
+      </div>
+      <div class="stats num">
+        <div class="stat hi"><strong>99.9%</strong><span>Uptime target, with health checks and alerts</span></div>
+        <div class="stat"><strong>&lt; 2 s</strong><span>API response budget for core screens</span></div>
+        <div class="stat"><strong>Daily</strong><span>Automated backups with a tested restore plan</span></div>
+        <div class="stat"><strong>CI/CD</strong><span>Automated tests on every change, documented APIs</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="band" id="investment">
+    <div class="wrap">
+      <div class="head">
+        <span class="kicker">Investment</span>
+        <h2>$14,000 – $29,000 for the backend</h2>
+        <p>Final figures are fixed after discovery, once custody and the liquidity partner are confirmed. Prices in US dollars.</p>
+      </div>
+      <div class="pricing">
+        <div class="pcard feature">
+          <div class="who"><h3>Backend development</h3><span class="chip">Weeks 9–28</span></div>
+          <div class="price num">$14,000 – $29,000<small>Ledger, APIs, integrations, security and launch</small></div>
+          <div class="lines num">
+            <div><span>Ledger, wallet and trading<small>Naira wallet, crypto execution, gift card payouts</small></span><span>Included</span></div>
+            <div><span>Admin and operations APIs<small>KYC, queues, rates, fees, fraud rules, audit log</small></span><span>Included</span></div>
+            <div><span>Integrations<small>Payments, KYC, liquidity, gift card supply, messaging</small></span><span>Included</span></div>
+            <div><span>Security, reliability and launch<small>Keys, monitoring, backups, CI/CD, store release</small></span><span>Included</span></div>
+          </div>
+          <a class="btn btn-mint" href="#next">Discuss the backend</a>
+        </div>
+        <div class="pcard">
+          <div class="who"><h3>Payment milestones</h3><span class="chip">5 payments</span></div>
+          <div class="mbar" aria-hidden="true" style="margin:0"><i style="flex:20;background:#0A0C0E"></i><i style="flex:25;background:#C9D6FF"></i><i style="flex:25;background:#8FB0FF"></i><i style="flex:15;background:#1764FF"></i><i style="flex:15;background:#13B981"></i></div>
+          <div class="mlist num">
+            <div><em>01</em><span>Contract signed, setup starts</span><b>20%</b></div>
+            <div><em>02</em><span>Ledger, wallet and KYC APIs in staging (wk 16)</span><b>25%</b></div>
+            <div><em>03</em><span>Crypto and gift card APIs in staging (wk 20)</span><b>25%</b></div>
+            <div><em>04</em><span>Admin APIs done, QA passed (wk 26)</span><b>15%</b></div>
+            <div><em>05</em><span>Live on App Store and Play Store</span><b>15%</b></div>
+          </div>
+        </div>
+      </div>
+      <div class="addons">
+        <h3>Optional, priced separately</h3>
+        <div class="addon-grid num">
+          <div class="addon"><b>Referral system</b><span>$1,500 – $3,000 (PRD §5.5)</span></div>
+          <div class="addon"><b>Independent penetration test</b><span>$3,000 – $8,000, external firm</span></div>
+          <div class="addon"><b>Maintenance retainer</b><span>$1,500 – $3,000 per month</span></div>
+          <div class="addon"><b>Hosting and infrastructure</b><span>$300 – $1,500 per month, paid to provider</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="band dark" id="timeline">
+    <div class="wrap">
+      <div class="head">
+        <span class="kicker">Timeline</span>
+        <h2>About 4 months of backend, alongside the frontend</h2>
+        <p>Weeks counted from signing the design &amp; frontend proposal.</p>
+      </div>
+      <div class="gantt-wrap">
+        <div class="gantt">
+          <span class="lbl">Setup and architecture<small>Backend</small></span>
+          <div class="track"><div class="bar b-be" style="grid-column:9 / 11"></div></div>
+          <span class="lbl">Ledger and wallet<small>Backend</small></span>
+          <div class="track"><div class="bar b-be" style="grid-column:10 / 19">Wk 10–18</div></div>
+          <span class="lbl">Trading and gift cards<small>Backend</small></span>
+          <div class="track"><div class="bar b-be" style="grid-column:12 / 21">Wk 12–20</div></div>
+          <span class="lbl">Integrations<small>Backend</small></span>
+          <div class="track"><div class="bar b-be" style="grid-column:12 / 21">Wk 12–20</div></div>
+          <span class="lbl">Admin and ops APIs<small>Backend</small></span>
+          <div class="track"><div class="bar b-be" style="grid-column:14 / 22">Wk 14–21</div></div>
+          <span class="lbl">Frontend build<small>Design &amp; frontend</small></span>
+          <div class="track"><div class="bar b-df" style="grid-column:9 / 25">Wk 9–24</div></div>
+          <span class="lbl">QA and security test<small>Joint</small></span>
+          <div class="track"><div class="bar b-qa" style="grid-column:23 / 27">Wk 23–26</div></div>
+          <span class="lbl">Store launch<small>Joint</small></span>
+          <div class="track"><div class="bar b-go" style="grid-column:27 / 29"></div></div>
+          <span class="lbl">Warranty<small>60 days</small></span>
+          <div class="track"><div class="bar b-wa" style="grid-column:29 / 38">Wk 29–37</div></div>
+          <span></span>
+          <div class="axis"><span style="grid-column:1">Wk 1</span><span style="grid-column:9">Wk 9</span><span style="grid-column:17">Wk 17</span><span style="grid-column:27">Wk 27</span><span style="grid-column:35">Wk 35</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="band" id="open">
+    <div class="wrap">
+      <div class="head">
+        <span class="kicker">Open items · PRD §13</span>
+        <h2>Three decisions that set the final price</h2>
+        <p>Your PRD lists these as still open. We settle them in discovery before fixing the quote.</p>
+      </div>
+      <div class="open">
+        <div class="ocard"><span class="k">In progress</span><h3>Licensing route and partner exchange</h3><p>Sets which liquidity API we connect and what reporting the SEC route needs.</p></div>
+        <div class="ocard"><span class="k">To decide</span><h3>Crypto custody</h3><p>Partner-held balances or your own keys in an HSM. Self-custody adds key management and on-chain monitoring work.</p></div>
+        <div class="ocard"><span class="k">To be added</span><h3>Launch assets and brands</h3><p>The final list of crypto assets, networks and gift card brands sets the integration and testing effort.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="band" id="terms" style="padding-top:0">
+    <div class="wrap">
+      <div class="terms">
+        <div class="tcard">
+          <h3>Not included</h3>
+          <ul>
+            <li>Brand, product design and frontend, quoted in the design &amp; frontend proposal</li>
+            <li>Third-party fees from payment, KYC, SMS, liquidity and gift card providers</li>
+            <li>Licensing, legal and compliance advice, including SEC VASP registration</li>
+            <li>Hosting costs, paid directly to the provider</li>
+          </ul>
+        </div>
+        <div class="tcard">
+          <h3>Assumptions</h3>
+          <ul>
+            <li>Partner sandbox access is ready by week 9</li>
+            <li>Approved designs and API needs from the design &amp; frontend team by week 10</li>
+            <li>Cloud and store accounts are created in your name before setup</li>
+            <li>Prices in US dollars, valid for 30 days, with a 60-day bug-fix warranty after launch</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="cta" id="next">
+    <div class="wrap">
+      <div class="cta-card">
+        <h2>Settle custody and partners, then build</h2>
+        <p>One discovery call on licensing, custody and partners gives us what we need for a fixed backend quote within 5 working days.</p>
+        <ol class="steps">
+          <li>Discuss licensing and partners on the discovery call</li>
+          <li>Approve the design &amp; frontend proposal</li>
+          <li>Confirm custody and the liquidity partner</li>
+          <li>Receive a fixed backend quote in 5 working days</li>
+          <li>Backend kick-off in week 9</li>
+        </ol>
+        <div class="ctas">
+          <a class="btn btn-mint" href="#investment">Review the investment</a>
+          <span>Reply to this proposal to book the call.</span>
+        </div>
+      </div>
+      <div class="pager">
+        <div><p>Proposal 1 of 2</p><h3>Brand, product design &amp; frontend: $11,000 – $17,500</h3></div>
+        <a class="btn btn-blue" href="../">Open the design &amp; frontend proposal →</a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span class="mark">Emrld<span>.</span></span>
+    <span>Prepared by Dr. Emrld for Ene Effiom Asuquo · Crypto &amp; Gift Card App (Nigeria) · Confidential</span>
+  </div>
+</footer>
+
+<script>
+(() => {
+  const nav = document.querySelector('.nav');
+  const onScroll = () => nav.classList.toggle('scrolled', window.scrollY > 8);
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+})();
+</script>
+</html>
