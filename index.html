@@ -422,6 +422,41 @@ footer .mark { font-size: 18px; color: var(--ink); }
   .entries div { grid-template-columns: 1.4fr 1fr 1fr; padding: 10px 12px; }
   .pager { padding: 22px; }
 }
+.axis span { white-space: nowrap; }
+</style>
+<style>
+/* How we work, responsibility grid, FAQ (patterns from Beside, Vanta/Superpower, OpenPhone) */
+.how { display: grid; grid-template-columns: repeat(4, 1fr); gap: 32px; border-top: 1px solid var(--line); padding-top: 28px; }
+.how li { list-style: none; display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+.how { margin: 0; padding-left: 0; }
+.how .n { font: 500 12px/1 var(--mono); color: var(--ink-3); }
+.how h3 { font-size: 18px; font-weight: 500; letter-spacing: -0.01em; }
+.how p { font-size: 15px; color: var(--ink-2); line-height: 1.45; }
+.how .when { font: 500 12px/1 var(--mono); color: var(--blue); }
+.matrix-wrap { margin-top: 64px; overflow-x: auto; }
+.matrix { width: 100%; min-width: 640px; border-collapse: collapse; font-size: 15px; }
+.matrix caption { text-align: left; font-size: 20px; font-weight: 500; letter-spacing: -0.01em; padding-bottom: 6px; }
+.matrix .cap-sub { display: block; font-size: 15px; font-weight: 400; color: var(--ink-2); margin-top: 4px; }
+.matrix th, .matrix td { padding: 14px 16px; border-bottom: 1px solid var(--line-2); text-align: center; }
+.matrix th:first-child, .matrix td:first-child { text-align: left; padding-left: 0; }
+.matrix thead th { font-size: 13px; font-weight: 500; color: var(--ink-3); border-bottom-color: var(--line); }
+.matrix thead th.hl { color: var(--ink); }
+.matrix td.hl { background: rgba(23,100,255,.05); }
+.matrix .yes { display: inline-grid; place-items: center; width: 22px; height: 22px; border-radius: 50%; background: #E3FBF2; color: #087A55; font-size: 13px; font-weight: 700; }
+.matrix .you { display: inline-block; font-size: 12px; font-weight: 500; padding: 3px 9px; border-radius: 999px; background: #FFF4DE; color: #8A5A00; }
+.matrix .no { color: var(--ink-3); }
+.faq { max-width: 820px; margin: 0 auto; border-top: 1px solid var(--line); }
+.faq details { border-bottom: 1px solid var(--line); }
+.faq summary { list-style: none; cursor: pointer; display: flex; justify-content: space-between; align-items: center; gap: 24px; padding: 22px 0; font-size: 18px; font-weight: 500; letter-spacing: -0.01em; }
+.faq summary::-webkit-details-marker { display: none; }
+.faq summary::after { content: ""; flex: none; width: 10px; height: 10px; border-right: 1.5px solid var(--ink-2); border-bottom: 1.5px solid var(--ink-2); transform: rotate(45deg) translateY(-3px); transition: transform .2s; }
+.faq details[open] summary::after { transform: rotate(-135deg) translateY(-2px); }
+.faq details p { padding: 0 48px 22px 0; color: var(--ink-2); font-size: 16px; line-height: 1.55; max-width: 68ch; }
+.faq-foot { max-width: 820px; margin: 20px auto 0; color: var(--ink-3); font-size: 15px; }
+.chip.start { background: var(--mint); color: var(--night); font-weight: 500; }
+@media (max-width: 1080px) { .how { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 720px) { .how { grid-template-columns: 1fr; gap: 24px; } .faq summary { font-size: 16px; } .faq details p { padding-right: 0; } }
+.axis span { white-space: nowrap; }
 </style>
 <header class="nav" id="top">
   <div class="wrap">
@@ -436,7 +471,7 @@ footer .mark { font-size: 18px; color: var(--ink); }
     </nav>
     <div class="nav-right">
       <a class="switch" href="backend/">Backend proposal →</a>
-      <a class="btn btn-blue btn-sm" href="#next">Next steps</a>
+      <a class="btn btn-blue btn-sm" href="#next">Book a call</a>
     </div>
   </div>
 </header>
@@ -445,11 +480,11 @@ footer .mark { font-size: 18px; color: var(--ink); }
   <section class="hero">
     <div class="wrap">
       <span class="eyebrow"><span class="dot"></span><b>Proposal 1 of 2</b> Brand, product design &amp; frontend · PRD v1.0 · 23 Oct 2026</span>
-      <h1>A brand Nigerians trust, an app they understand, built screen for screen</h1>
-      <p class="sub">We design your brand and every customer and admin screen, test them with real first-time crypto users, then build the mobile app and admin dashboard from those designs.</p>
+      <h1>Make your app the one Nigerians trust with their Naira</h1>
+      <p class="sub">We create your brand, design every screen in your PRD, test it with real first-time crypto users, and build the mobile app and admin dashboard from those designs.</p>
       <div class="ctas">
-        <a class="btn btn-blue" href="#investment">See the investment</a>
-        <a class="btn btn-ghost" href="#prd">How we cover the PRD</a>
+        <a class="btn btn-blue" href="#next">Book a 20-minute call</a>
+        <a class="btn btn-ghost" href="#investment">See what’s included</a>
       </div>
       <div class="hero-stats num">
         <div><strong>$11k – $17.5k</strong><span>Total, fixed after discovery</span></div>
@@ -494,7 +529,7 @@ footer .mark { font-size: 18px; color: var(--ink); }
     <div class="wrap">
       <div class="head">
         <span class="kicker">PRD coverage</span>
-        <h2>Every customer and admin requirement, designed and built</h2>
+        <h2>Everything in your PRD, mapped to a screen and built</h2>
         <p>Each section of your Project Requirements Document, mapped to what we design and what we build in this proposal.</p>
       </div>
       <div class="cov">
@@ -604,7 +639,7 @@ footer .mark { font-size: 18px; color: var(--ink); }
         <div class="meta">
           <span class="kicker">Workstream 3</span>
           <h2>Frontend development</h2>
-          <p>We build exactly what we designed, so nothing is lost between design and code. Work starts in week 9 as the final screens land, alongside the backend team.</p>
+          <p>The same team that designs your screens builds them, so nothing gets lost between Figma and code. Work starts in week 9, as the final screens land.</p>
           <div class="facts num">
             <div><b>~4 months</b><span>Weeks 9–24, then QA</span></div>
             <div><b>$3.5k – $6k</b><span>Price range</span></div>
@@ -622,6 +657,39 @@ footer .mark { font-size: 18px; color: var(--ink); }
     </div>
   </section>
 
+    <section class="band" id="process" style="padding-bottom:0">
+    <div class="wrap">
+      <div class="head">
+        <span class="kicker">How we work together</span>
+        <h2>You see progress every week, not just at the end</h2>
+        <p>Four stages from first call to launch, with a clear decision from you at each one.</p>
+      </div>
+      <ol class="how">
+        <li><span class="n">01</span><span class="when">Before kick-off</span><h3>20-minute discovery call</h3><p>We confirm scope, test users and budget, then send a fixed quote within 5 working days.</p></li>
+        <li><span class="n">02</span><span class="when">Weeks 1–4</span><h3>Brand and UX sign-off</h3><p>You approve the brand direction in week 2 and the full user flows in week 4.</p></li>
+        <li><span class="n">03</span><span class="when">Weeks 4–10</span><h3>Weekly design reviews</h3><p>Each week you review new screens in Figma, then try the clickable prototype before handoff.</p></li>
+        <li><span class="n">04</span><span class="when">Weeks 9–28</span><h3>Build, test and launch</h3><p>You test real builds on your own phone as they land, then approve the store release.</p></li>
+      </ol>
+
+      <div class="matrix-wrap">
+        <table class="matrix">
+          <caption>Who does what<span class="cap-sub">Clear ownership from day one, so nothing falls between the two proposals.</span></caption>
+          <thead><tr><th scope="col">Deliverable</th><th scope="col" class="hl">Design &amp; frontend</th><th scope="col" class="">Backend</th><th scope="col">You</th></tr></thead>
+          <tbody>
+            <tr><td>Brand, screens and prototype</td><td class="hl"><span class="yes">✓</span></td><td class=""><span class="no">–</span></td><td><span class="you">Approve</span></td></tr>
+            <tr><td>Mobile app and admin dashboard code</td><td class="hl"><span class="yes">✓</span></td><td class=""><span class="no">–</span></td><td><span class="you">Test</span></td></tr>
+            <tr><td>Ledger, APIs and partner integrations</td><td class="hl"><span class="no">–</span></td><td class=""><span class="yes">✓</span></td><td><span class="no">–</span></td></tr>
+            <tr><td>Security controls and monitoring</td><td class="hl"><span class="no">–</span></td><td class=""><span class="yes">✓</span></td><td><span class="no">–</span></td></tr>
+            <tr><td>Partner accounts and API keys</td><td class="hl"><span class="no">–</span></td><td class=""><span class="yes">✓</span></td><td><span class="you">Sign up</span></td></tr>
+            <tr><td>Licensing, legal and compliance advice</td><td class="hl"><span class="no">–</span></td><td class=""><span class="no">–</span></td><td><span class="you">Own</span></td></tr>
+            <tr><td>Cloud, repositories and store accounts</td><td class="hl"><span class="yes">✓</span></td><td class=""><span class="yes">✓</span></td><td><span class="you">Own</span></td></tr>
+            <tr><td>Store submission and launch</td><td class="hl"><span class="yes">✓</span></td><td class=""><span class="yes">✓</span></td><td><span class="you">Approve</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
   <section class="band" id="investment" style="background:var(--lilac)">
     <div class="wrap">
       <div class="head">
@@ -631,14 +699,14 @@ footer .mark { font-size: 18px; color: var(--ink); }
       </div>
       <div class="pricing">
         <div class="pcard feature">
-          <div class="who"><h3>Design &amp; frontend</h3><span class="chip">Weeks 1–28</span></div>
+          <div class="who"><h3>Design &amp; frontend</h3><span class="chip start">Start here</span></div>
           <div class="price num">$11,000 – $17,500<small>Three workstreams, one team</small></div>
           <div class="lines num">
             <div><span>Brand identity<small>3 weeks</small></span><span>$1,500 – $2,500</span></div>
             <div><span>Product design<small>10 weeks, ~60 mobile screens and 20 admin views</small></span><span>$6,000 – $9,000</span></div>
             <div><span>Frontend development<small>Mobile app and admin dashboard, from week 9</small></span><span>$3,500 – $6,000</span></div>
           </div>
-          <a class="btn btn-mint" href="#next">Start with discovery</a>
+          <a class="btn btn-mint" href="#next">Book a 20-minute call</a>
         </div>
         <div class="pcard">
           <div class="who"><h3>Payment milestones</h3><span class="chip">5 payments</span></div>
@@ -687,6 +755,25 @@ footer .mark { font-size: 18px; color: var(--ink); }
     </div>
   </section>
 
+    <section class="band" id="faq">
+    <div class="wrap">
+      <div class="head">
+        <span class="kicker">FAQ</span>
+        <h2>Questions you might be asking</h2>
+      </div>
+      <div class="faq">
+        <details><summary>Why is design and frontend separate from the backend?</summary><p>So you can start now. Brand, screens and the app's frontend don't depend on the licensing route or the crypto partner, which your PRD lists as still open. The backend quote is fixed once those are settled.</p></details>
+        <details><summary>What does $3,500 – $6,000 for frontend development cover?</summary><p>Building the mobile app for Android and iOS and the web admin dashboard from the approved designs, connected to the backend APIs and tested on real phones. Where it lands in the range depends on the final screen count confirmed in discovery.</p></details>
+        <details><summary>Which technology will you build the app with?</summary><p>One cross-platform codebase, React Native or Flutter. We recommend one in discovery based on performance on entry-level Android phones and who will maintain the app after launch.</p></details>
+        <details><summary>What if we want changes after approving a design?</summary><p>Each design phase includes 2 revision rounds. Changes after sign-off are billed hourly, and we tell you the cost before starting.</p></details>
+        <details><summary>Who owns the designs and code?</summary><p>You do. Figma files, brand assets and code sit in your accounts from day one, and the intellectual property transfers to you on payment.</p></details>
+        <details><summary>What happens after launch?</summary><p>A 60-day bug-fix warranty is included. After that, an optional maintenance retainer of $1,500 – $3,000 per month covers updates and fixes.</p></details>
+        <details><summary>How do payments work?</summary><p>Five payments, each tied to something you can see: kick-off, brand and UX approval, design handoff, screens working in staging, and the live app.</p></details>
+      </div>
+      <p class="faq-foot">Anything else? Ask on the discovery call or reply to this proposal.</p>
+    </div>
+  </section>
+
   <section class="band" id="terms">
     <div class="wrap">
       <div class="head">
@@ -719,8 +806,8 @@ footer .mark { font-size: 18px; color: var(--ink); }
   <section class="cta" id="next">
     <div class="wrap">
       <div class="cta-card">
-        <h2>Start with a 20-minute discovery call</h2>
-        <p>We confirm scope, test users and budget, then return a fixed quote within 5 working days.</p>
+        <h2>Book your 20-minute discovery call</h2>
+        <p>Twenty minutes is enough to confirm scope, test users and budget. You get a fixed quote within 5 working days.</p>
         <ol class="steps">
           <li>Share your brand references</li>
           <li>Hold the discovery call on scope and budget</li>
@@ -730,7 +817,7 @@ footer .mark { font-size: 18px; color: var(--ink); }
         </ol>
         <div class="ctas">
           <a class="btn btn-mint" href="#investment">Review the investment</a>
-          <span>Reply to this proposal to book the call.</span>
+          <span>Reply to this proposal with a time that suits you.</span>
         </div>
       </div>
       <div class="pager">
